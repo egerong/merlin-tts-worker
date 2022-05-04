@@ -3,7 +3,7 @@
 This repository contains Estonian multi-speaker neural text-to-speech synthesis workers that process requests from 
 RabbitMQ.
 
-The project is developed by the [NLP research group](https://tartunlp.ai) at the [Universty of Tartu](https://ut.ee).
+The project is developed by the [Estonian Language Institute](https://www.eki.ee) and is based on work by the [NLP research group](https://tartunlp.ai) at the [Universty of Tartu](https://ut.ee).
 Speech synthesis can also be tested in our [web demo](https://www.neurokone.ee/).
 
 ## Models
