@@ -4,6 +4,7 @@ config/*.env
 .git/
 .gitignore
 .github
-/logs/*
+/logs/
 *.iml
 deepvoice3_pytorch/
+__pycache__/

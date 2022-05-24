@@ -10,46 +10,10 @@ data_name: ''
 
 service: tts
 workers:
-  albert:
+  tonis_merlin:
     parameters:
       config_path: config/config.yaml
       checkpoint_path: models/tts/albert
       vocoder_path: models/hifigan/vctk
     routes:
-      - albert
-  kalev:
-    parameters:
-      config_path: config/config.yaml
-      checkpoint_path: models/tts/kalev
-      vocoder_path: models/hifigan/vctk
-    routes:
-      - kalev
-  kylli:
-    parameters:
-      config_path: config/config.yaml
-      checkpoint_path: models/tts/kylli
-      vocoder_path: models/hifigan/ljspeech
-    routes:
-      - külli
-      - kylli
-  mari:
-    parameters:
-      config_path: config/config.yaml
-      checkpoint_path: models/tts/mari
-      vocoder_path: models/hifigan/ljspeech
-    routes:
-      - mari
-  meelis:
-    parameters:
-      config_path: config/config.yaml
-      checkpoint_path: models/tts/meelis
-      vocoder_path: models/hifigan/vctk
-    routes:
-      - meelis
-  vesta:
-    parameters:
-      config_path: config/config.yaml
-      checkpoint_path: models/tts/vesta
-      vocoder_path: models/hifigan/vctk
-    routes:
-      - vesta
+      - tonis_merlin

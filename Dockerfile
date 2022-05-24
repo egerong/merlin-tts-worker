@@ -1,8 +1,8 @@
+# Python environment
 FROM continuumio/miniconda3 as build
 
-# Python environment
 RUN apt-get update && \
-    apt-get install -y build-essential && \
+    apt-get install -y build-essential csh automake && \
     conda install -c conda-forge conda-pack mamba
 
 COPY environments/env.yml .
@@ -21,20 +21,20 @@ RUN mamba env create -f env.yml -n venv && \
     conda env remove -n venv
 
 # Merlin tools
-RUN apt-get install -y build-essential csh automake
 COPY mrln_et/tools tools
 RUN cd tools && \
     sh compile_tools.sh
 
-# Prod
-FROM nvidia/cuda:11.4.1-base-ubuntu20.04
+# Deploy
+FROM nvidia/cuda:11.4.1-cudnn8-devel-ubuntu20.04
 
 RUN apt-get update && \
-    apt-get install -y espeak-ng sox build-essential
+    apt-get install -y espeak-ng sox build-essential lsb-release
 
-ENV PYTHONIOENCODING=utf-8
 WORKDIR /app
-VOLUME /app/models
+#VOLUME /app/voices
+    
+VOLUME /tmp
 
 RUN adduser --disabled-password --gecos "app" app && \
     chown -R app:app /app
@@ -55,11 +55,15 @@ RUN rm -rf mrln_et/tools
 #COPY --chown=app:app mrln_et/src mrln_et/
 COPY --from=build --chown=app:app /tools mrln_et/tools
 
-RUN ls && \
-    cd mrln_et && \
-    ls && \
-    ./synth.sh  eki_et_tnu16k in.txt tnu.wav
+RUN mkdir logs
+#COPY --chown=app:app tts_preprocess_et/ tts_preprocess_et/
+#COPY --chown=app:app settings.py tts_worker.py ./
+#COPY --chown=app:app mrln_et/src/ mrln_et/src/
+#COPY --chown=app:app mrln_et/conf/ mrln_et/conf/
+#COPY --chown=app:app mrln_et/run.py mrln_et/submit.sh mrln_et/synth.sh mrln_et/
 
+ENV PYTHONIOENCODING=utf8
+ENV LANG=C.UTF-8
 RUN echo "python tts_worker.py --worker \$WORKER_NAME" > entrypoint.sh
 
 ENTRYPOINT ["bash", "entrypoint.sh"]
