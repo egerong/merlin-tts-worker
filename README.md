@@ -4,13 +4,8 @@ This repository contains Estonian multi-speaker neural text-to-speech synthesis 
 RabbitMQ.
 
 The project is developed by the [Estonian Language Institute](https://www.eki.ee) and is based on work by the [NLP research group](https://tartunlp.ai) at the [Universty of Tartu](https://ut.ee).
-Speech synthesis can also be tested in our [web demo](https://www.neurokone.ee/).
 
 ## Models
-
-[The releases section](https://github.com/TartuNLP/text-to-speech-worker/releases) contains the model files or their 
-download instructions. If a release does not specify the model information, the model from the previous release can 
-be used. We advise always using the latest available version to ensure best model quality and code compatibility.
 
 ## Setup
 
@@ -29,33 +24,51 @@ be added for each model.
 ```
 version: '3'
 services:
+version: '3'
+services:
+
   rabbitmq:
     image: 'rabbitmq:3.6-alpine'
-    environment:
-      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
-      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}
+    restart: unless-stopped
+    healthcheck:
+      test: rabbitmq-diagnostics check_port_connectivity
+      interval: 1s
+      timeout: 3s
+      retries: 30
+    mem_limit: 500m
+    env_file: .env_rabbit
+    ports: 
+      - 5672:5672
+
   tts_api:
     image: ghcr.io/tartunlp/text-to-speech-api:latest
+    restart: unless-stopped
+    mem_limit: 1g
     environment:
       - MQ_HOST=rabbitmq
       - MQ_PORT=5672
-      - MQ_USERNAME=${RABBITMQ_USER}
-      - MQ_PASSWORD=${RABBITMQ_PASS}
       - GUNICORN_WORKERS=8
+    env_file: .env_rabbit
     ports:
-      - '5000:5000'
+      - '5555:5000'
     depends_on:
       - rabbitmq
-  tts_worker_mari:
-    image: ghcr.io/tartunlp/text-to-speech-worker:latest
+
+  tts_worker_tonis_merlin:
+    image: merlin-tts-worker
+    restart: unless-stopped
+    runtime: nvidia
+    mem_limit: 3g
     environment:
-      - WORKER_NAME=mari
+      - WORKER_NAME=tonis_merlin
       - MQ_HOST=rabbitmq
       - MQ_PORT=5672
-      - MQ_USERNAME=${RABBITMQ_USER}
-      - MQ_PASSWORD=${RABBITMQ_PASS}
+      - MERLIN_TEMP_DIR=/tmp
+    env_file: .env_rabbit
+    tmpfs:
+      - /tmp
     volumes:
-      - ./models:/app/models
+      - ./config:/app/config
     depends_on:
       - rabbitmq
 ```
@@ -78,8 +91,6 @@ conda activate tts
 python -c 'import nltk; nltk.download("punkt"); nltk.download("cmudict")'
 ```
 
-- Download the models from the [releases section](https://github.com/TartuNLP/text-to-speech-worker/releases) and 
-  place inside the `models/` directory.
 
 - Check the configuration files and change any defaults as needed. Make sure that the `checkpoint` parameters in
   `config/config.yaml` points to the model filse you just downloaded. By default, logs will be stored in the 
