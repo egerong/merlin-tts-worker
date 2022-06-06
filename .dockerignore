@@ -8,3 +8,4 @@ config/*.env
 *.iml
 deepvoice3_pytorch/
 __pycache__/
+mrln_et/voices

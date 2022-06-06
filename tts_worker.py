@@ -85,7 +85,7 @@ class TTSWorker(Worker):
         # The quotation marks need to be unified, otherwise sentence tokenization won't work
         #text = re.sub(r'[«»“„]', r'"', text)
 
-        wav = synthesize(clean(text))
+        wav = synthesize(text)
 
         return wav
 
