@@ -1,6 +1,6 @@
 [submodule "tts_preprocess_et"]
 	path = tts_preprocess_et
 	url = https://github.com/TartuNLP/tts_preprocess_et.git
-[submodule "mrln_et"]
-	path = mrln_et
-	url = git@github.com:ikiissel/mrln_et.git
+[submodule "mrln_et_light"]
+	path = mrln_et_light
+	url = git@github.com:ikiissel/mrln_et_light.git
